@@ -12,13 +12,25 @@ The client determines which values it supports. The panel disables unavailable s
 
 Place the `ForeverGraphics` folder inside your WoW Forever installation’s `_forever_/Interface/AddOns/` directory. Restart the game if the addon does not appear in the AddOns list.
 
-Download the installable [version 1.2.2 ZIP](dist/ForeverGraphics-1.2.2.zip?raw=true). Keep the folder named `ForeverGraphics` when installing.
+Download the installable `ForeverGraphics-<version>.zip` from the [latest release](https://github.com/proevilz/gfx-settings/releases/latest). Keep the folder named `ForeverGraphics` when installing. GitHub's automatic source archives are not the installable addon ZIP.
 
 Made by [@proevilz](https://x.com/proevilz). Click the handle in the panel to copy the profile URL.
 
 ## Development
 
 Run `lua tests/forever-graphics.lua` from this repository root. The tests cover validation, saved originals, client clamping, panel initialization and the profile link; they do not replace in-game visual checks.
+
+## Publishing
+
+`main` is the development branch. Only pushes to `release` publish GitHub releases.
+
+1. Finish and test changes on `main`.
+2. Increase `## Version` in `ForeverGraphics.toc` to a new `major.minor.patch` version and commit it.
+3. Merge `main` into `release` and push `release` (or merge a pull request targeting `release`).
+
+The workflow runs the Lua tests, builds and verifies a ZIP with a top-level `ForeverGraphics` folder, then creates a `v<version>` tag and GitHub release at that exact commit. Existing releases are never overwritten: use a new TOC version for every release. Manual runs are allowed on `release` only. Return to `main` for further development.
+
+No CurseForge upload is configured.
 
 ## 1.2.2
 
