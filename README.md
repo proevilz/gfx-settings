@@ -35,7 +35,3 @@ No CurseForge upload is configured.
 ## 1.0.0
 
 Initial public release. Includes twelve graphics controls, saved original settings, default-value markers and the author profile link.
-
-## 1.0.1
-
-Renamed the addon and ZIP to `GFXSettings`. The `ForeverGraphics` folder is a settings-only compatibility loader; it replaces the old addon entry point and does not run the old UI. Keep it enabled to carry saved original values across the rename. The existing `ForeverGraphicsDB` identifier is retained for compatibility. No SavedVariables files should be deleted. If the new addon is not listed after reloading, restart the game when convenient.
