@@ -1,7 +1,7 @@
 ## Interface: 16001
 ## Title: GFX Settings
 ## Notes: Small panel for graphics console settings. Open with /gfx.
-## Version: 1.2.2
+## Version: 1.0.0
 ## Author: proevilz
 ## SavedVariables: ForeverGraphicsDB
 Core.lua

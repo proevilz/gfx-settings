@@ -32,9 +32,6 @@ The workflow runs the Lua tests, builds and verifies a ZIP with a top-level `For
 
 No CurseForge upload is configured.
 
-## 1.2.2
+## 1.0.0
 
-- Updated title, slider handles, close-button spacing and secondary Restore button.
-- Added the author credit and profile URL popup.
-- Limited water ripples to 0–2 to match observed client behavior.
-- Fixed initialization for buttons that use multiple texture regions.
+Initial public release. Includes twelve graphics controls, saved original settings, default-value markers and the author profile link.
