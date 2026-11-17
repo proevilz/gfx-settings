@@ -52,7 +52,7 @@ local function Result(row, ok, message)
 end
 
 local function CreatePanel()
-    panel = CreateFrame("Frame", "ForeverGraphicsPanel", UIParent, "BackdropTemplate")
+    panel = CreateFrame("Frame", "GFXSettingsPanel", UIParent, "BackdropTemplate")
     panel:Hide()
     panel:SetSize(640, 310)
     -- Fit the panel on smaller UI canvases without changing the user's UI scale.
@@ -74,7 +74,7 @@ local function CreatePanel()
     title:SetTextColor(unpack(accent))
     local close = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -12, -12)
-    table.insert(UISpecialFrames, "ForeverGraphicsPanel")
+    table.insert(UISpecialFrames, "GFXSettingsPanel")
     local groups = {
         {title = "Ground & atmosphere", options = {1, 2, 3, 4, 5, 6}},
         {title = "Scenery & finish", options = {7, 8, 9, 10, 11, 12}},
@@ -176,7 +176,7 @@ local function CreatePanel()
     credit:SetScript("OnEnter", function() handle:SetTextColor(1, 1, 1) end)
     credit:SetScript("OnLeave", function() handle:SetTextColor(unpack(accent)) end)
     credit:SetScript("OnClick", function()
-        StaticPopupDialogs.FOREVERGRAPHICS_PROFILE = {
+        StaticPopupDialogs.GFXSETTINGS_PROFILE = {
             text = "Copy this URL to open my profile in your browser:",
             button1 = "Close", hasEditBox = true, editBoxWidth = 260,
             timeout = 0, whileDead = true, hideOnEscape = true,
@@ -187,14 +187,14 @@ local function CreatePanel()
                 editBox:HighlightText()
             end,
         }
-        StaticPopup_Show("FOREVERGRAPHICS_PROFILE")
+        StaticPopup_Show("GFXSETTINGS_PROFILE")
     end)
     panel:SetScript("OnShow", Refresh)
 end
 
-SLASH_FOREVERGRAPHICS1 = "/gfx"
-SLASH_FOREVERGRAPHICS2 = "/graphicscontrols"
-SlashCmdList.FOREVERGRAPHICS = function()
+SLASH_GFXSETTINGS1 = "/gfx"
+SLASH_GFXSETTINGS2 = "/graphicscontrols"
+SlashCmdList.GFXSETTINGS = function()
     if not panel then CreatePanel() end
     panel:SetShown(not panel:IsShown())
 end

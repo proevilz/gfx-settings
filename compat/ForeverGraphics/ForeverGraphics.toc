@@ -1,0 +1,5 @@
+## Interface: 16001
+## Title: GFXSettings saved-settings compatibility
+## Notes: Loads existing saved settings from the previous addon name. No UI or controls.
+## Version: 1.0.1
+## SavedVariables: ForeverGraphicsDB

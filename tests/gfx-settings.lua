@@ -9,7 +9,7 @@ C_CVar = {
     end,
 }
 InCombatLockdown = function() return combat end
-assert(loadfile(addonRoot .. "/Core.lua"))("ForeverGraphics", G)
+assert(loadfile(addonRoot .. "/Core.lua"))("GFXSettings", G)
 local grass, weather = G.options[1], G.options[4]
 assert(writes == 0, "loading must not change graphics")
 assert(not G.Write(grass, "bad"))
@@ -96,14 +96,14 @@ CreateFrame = function(_, name)
 end
 unpack = table.unpack or unpack
 UIParent, UISpecialFrames, SlashCmdList = {GetWidth = function() return 1920 end, GetHeight = function() return 1080 end}, {}, {}
-assert(loadfile(addonRoot .. "/Panel.lua"))("ForeverGraphics", G)
+assert(loadfile(addonRoot .. "/Panel.lua"))("GFXSettings", G)
 local previousWrites = writes
-SlashCmdList.FOREVERGRAPHICS()
-assert(ForeverGraphicsPanel:IsShown())
+SlashCmdList.GFXSETTINGS()
+assert(GFXSettingsPanel:IsShown())
 assert(#markers == 1 and markers[1] == 53, "mark the midpoint and skip missing or out-of-range defaults")
 assert(writes == previousWrites, "opening panel must not write CVars")
-SlashCmdList.FOREVERGRAPHICS()
-assert(not ForeverGraphicsPanel:IsShown())
+SlashCmdList.GFXSETTINGS()
+assert(not GFXSettingsPanel:IsShown())
 for _, control in ipairs(controls) do
     if control.scripts.OnValueChanged then
         control:SetValue(80)
@@ -124,4 +124,16 @@ StaticPopup_Show = function(name)
 end
 controls[#controls].scripts.OnClick()
 assert(profileBox.text == "https://x.com/proevilz" and profileBox.focused and profileBox.selected)
-print("Forever Graphics: validation, undo, failures, client clamping, and panel smoke checks passed")
+print("GFXSettings: validation, undo, failures, client clamping, and panel smoke checks passed")
+
+local function readFile(name)
+    local file = assert(io.open(addonRoot .. "/" .. name))
+    local content = file:read("*a")
+    file:close()
+    return content
+end
+assert(readFile("GFXSettings.toc"):find("## SavedVariables: ForeverGraphicsDB", 1, true))
+assert(readFile("GFXSettings.toc"):find("## OptionalDeps: ForeverGraphics", 1, true))
+local legacy = readFile("compat/ForeverGraphics/ForeverGraphics.toc")
+assert(legacy:find("## SavedVariables: ForeverGraphicsDB", 1, true))
+assert(not legacy:find("Core.lua", 1, true) and not legacy:find("Panel.lua", 1, true))

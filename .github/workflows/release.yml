@@ -27,7 +27,7 @@ jobs:
 
       - name: Test
         run: |
-          lua5.1 tests/forever-graphics.lua
+          lua5.1 tests/gfx-settings.lua
           luac5.1 -p Core.lua
           luac5.1 -p Panel.lua
 
@@ -40,21 +40,23 @@ jobs:
           from pathlib import Path
           from zipfile import ZipFile, ZIP_DEFLATED
 
-          versions = re.findall(r'^## Version: (\d+\.\d+\.\d+)$', Path('ForeverGraphics.toc').read_text(), re.M)
+          versions = re.findall(r'^## Version: (\d+\.\d+\.\d+)$', Path('GFXSettings.toc').read_text(), re.M)
           assert len(versions) == 1, 'TOC must contain one major.minor.patch version'
           version = versions[0]
-          archive = Path(os.environ['RUNNER_TEMP']) / f'ForeverGraphics-{version}.zip'
-          files = ['Core.lua', 'Panel.lua', 'ForeverGraphics.toc', 'README.md', 'logo.png']
+          archive = Path(os.environ['RUNNER_TEMP']) / f'GFXSettings-{version}.zip'
+          files = ['Core.lua', 'Panel.lua', 'GFXSettings.toc', 'README.md', 'logo.png']
           if Path('LICENSE').is_file():
               files.append('LICENSE')
+          entries = {f'GFXSettings/{name}': Path(name) for name in files}
+          entries['ForeverGraphics/ForeverGraphics.toc'] = Path('compat/ForeverGraphics/ForeverGraphics.toc')
           with ZipFile(archive, 'w', ZIP_DEFLATED, compresslevel=9) as package:
-              for name in files:
-                  package.write(name, f'ForeverGraphics/{name}')
+              for name, source in entries.items():
+                  package.write(source, name)
           with ZipFile(archive) as package:
               assert package.testzip() is None
-              assert set(package.namelist()) == {f'ForeverGraphics/{name}' for name in files}
-              for name in files:
-                  assert package.read(f'ForeverGraphics/{name}') == Path(name).read_bytes()
+              assert set(package.namelist()) == set(entries)
+              for name, source in entries.items():
+                  assert package.read(name) == source.read_bytes()
           with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
               output.write(f'version={version}\narchive={archive}\n')
           PY
@@ -71,5 +73,5 @@ jobs:
           fi
           gh release create "v$VERSION" "$ARCHIVE" \
             --target "$GITHUB_SHA" \
-            --title "GFX Settings $VERSION" \
+            --title "GFXSettings $VERSION" \
             --generate-notes

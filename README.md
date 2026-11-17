@@ -1,4 +1,4 @@
-# GFX Settings
+# GFXSettings
 
 Adjust twelve graphics settings in WoW Forever, including grass density, draw distance, weather, reflections and shadow edges. Type `/gfx` or `/graphicscontrols` to open GFX Settings. Drag the title to move the panel or press Escape to close it.
 
@@ -10,28 +10,32 @@ The client determines which values it supports. The panel disables unavailable s
 
 ## Installation
 
-Place the `ForeverGraphics` folder inside your WoW Forever installation’s `_forever_/Interface/AddOns/` directory. Restart the game if the addon does not appear in the AddOns list.
+Extract both `GFXSettings` and `ForeverGraphics` from the ZIP. Place these folders inside your WoW Forever installation’s `_forever_/Interface/AddOns/` directory. Restart the game if the addon does not appear in the AddOns list.
 
-Download the installable `ForeverGraphics-<version>.zip` from the [latest release](https://github.com/proevilz/gfx-settings/releases/latest). Keep the folder named `ForeverGraphics` when installing. GitHub's automatic source archives are not the installable addon ZIP.
+Download the installable `GFXSettings-<version>.zip` from the [latest release](https://github.com/proevilz/gfx-settings/releases/latest). Keep the folder named `GFXSettings` when installing. GitHub's automatic source archives are not the installable addon ZIP.
 
 Made by [@proevilz](https://x.com/proevilz). Click the handle in the panel to copy the profile URL.
 
 ## Development
 
-Run `lua tests/forever-graphics.lua` from this repository root. The tests cover validation, saved originals, client clamping, panel initialization and the profile link; they do not replace in-game visual checks.
+Run `lua tests/gfx-settings.lua` from this repository root. The tests cover validation, saved originals, client clamping, panel initialization and the profile link; they do not replace in-game visual checks.
 
 ## Publishing
 
 `main` is the development branch. Only pushes to `release` publish GitHub releases.
 
 1. Finish and test changes on `main`.
-2. Increase `## Version` in `ForeverGraphics.toc` to a new `major.minor.patch` version and commit it.
+2. Increase `## Version` in `GFXSettings.toc` to a new `major.minor.patch` version and commit it.
 3. Merge `main` into `release` and push `release` (or merge a pull request targeting `release`).
 
-The workflow runs the Lua tests, builds and verifies a ZIP with a top-level `ForeverGraphics` folder, then creates a `v<version>` tag and GitHub release at that exact commit. Existing releases are never overwritten: use a new TOC version for every release. Manual runs are allowed on `release` only. Return to `main` for further development.
+The workflow runs the Lua tests, builds and verifies a ZIP with a top-level `GFXSettings` folder, then creates a `v<version>` tag and GitHub release at that exact commit. Existing releases are never overwritten: use a new TOC version for every release. Manual runs are allowed on `release` only. Return to `main` for further development.
 
 No CurseForge upload is configured.
 
 ## 1.0.0
 
 Initial public release. Includes twelve graphics controls, saved original settings, default-value markers and the author profile link.
+
+## 1.0.1
+
+Renamed the addon and ZIP to `GFXSettings`. The `ForeverGraphics` folder is a settings-only compatibility loader; it replaces the old addon entry point and does not run the old UI. Keep it enabled to carry saved original values across the rename. The existing `ForeverGraphicsDB` identifier is retained for compatibility. No SavedVariables files should be deleted. If the new addon is not listed after reloading, restart the game when convenient.
