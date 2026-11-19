@@ -52,11 +52,17 @@ local function Result(row, ok, message)
 end
 
 local function CreatePanel()
+    local groups = {
+        {title = "World & atmosphere", options = {1, 2, 3, 4, 13, 14, 15, 19, 20, 21, 22}},
+        {title = "Scenery & finish", options = {5, 6, 7, 8, 16, 9, 10, 11, 12, 17, 18}},
+    }
+    local footerY = -72 - math.max(#groups[1].options, #groups[2].options) * 33
+    local panelHeight = -footerY + 40
     panel = CreateFrame("Frame", "GFXSettingsPanel", UIParent, "BackdropTemplate")
     panel:Hide()
-    panel:SetSize(640, 310)
+    panel:SetSize(640, panelHeight)
     -- Fit the panel on smaller UI canvases without changing the user's UI scale.
-    panel:SetScale(math.min(1, (UIParent:GetWidth() - 40) / 640, (UIParent:GetHeight() - 40) / 310))
+    panel:SetScale(math.min(1, (UIParent:GetWidth() - 40) / 640, (UIParent:GetHeight() - 40) / panelHeight))
     panel:SetPoint("CENTER")
     panel:SetFrameStrata("DIALOG")
     panel:SetClampedToScreen(true)
@@ -75,10 +81,6 @@ local function CreatePanel()
     local close = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -12, -12)
     table.insert(UISpecialFrames, "GFXSettingsPanel")
-    local groups = {
-        {title = "Ground & atmosphere", options = {1, 2, 3, 4, 5, 6}},
-        {title = "Scenery & finish", options = {7, 8, 9, 10, 11, 12}},
-    }
     rows = {}
     for column, group in ipairs(groups) do
         local x = 16 + (column - 1) * 310
@@ -156,17 +158,17 @@ local function CreatePanel()
             input:SetScript("OnEscapePressed", function() input:ClearFocus(); RefreshRow(row) end)
         end
     end
-    Button(panel, "Refresh", 80, 16, -270, Refresh)
-    local restore = Button(panel, "Restore originals", 126, 104, -270, function() Result(nil, G.Restore()) end)
+    Button(panel, "Refresh", 80, 16, footerY, Refresh)
+    local restore = Button(panel, "Restore originals", 126, 104, footerY, function() Result(nil, G.Restore()) end)
     -- Panel buttons can use multiple texture regions instead of a normal texture.
     for _, region in ipairs({restore:GetRegions()}) do
         if region:IsObjectType("Texture") then region:SetDesaturated(true) end
     end
-    status = Text(panel, "", 242, -276, 252, 10)
-    local creditPrefix = Text(panel, "made by", 506, -277, 48, 10, true)
+    status = Text(panel, "", 242, footerY - 6, 252, 10)
+    local creditPrefix = Text(panel, "made by", 506, footerY - 7, 48, 10, true)
     creditPrefix:SetJustifyH("RIGHT")
     local credit = CreateFrame("Button", nil, panel)
-    credit:SetPoint("TOPLEFT", 554, -270)
+    credit:SetPoint("TOPLEFT", 554, footerY)
     credit:SetSize(70, 24)
     local handle = Text(credit, "@proevilz", 0, -7, 70, 10)
     handle:SetJustifyH("RIGHT")

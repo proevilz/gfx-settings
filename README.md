@@ -1,6 +1,6 @@
 # GFXSettings
 
-Adjust twelve graphics settings in WoW Forever, including grass density, draw distance, weather, reflections and shadow edges. Type `/gfx` or `/graphicscontrols` to open GFX Settings. Drag the title to move the panel or press Escape to close it.
+Adjust 22 graphics settings in WoW Forever, including world draw distance, horizon fog, volumetric fog, grass density, reflections and shadow resolution. Type `/gfx` or `/graphicscontrols` to open GFX Settings. Drag the title to move the panel or press Escape to close it.
 
 Sliders apply changes immediately. For a precise value, type it in the number field and press Enter. Hover over a slider for a description and its console variable name. A faint tick marks the game default when the client reports a value within the slider range.
 
@@ -31,6 +31,12 @@ Run `lua tests/gfx-settings.lua` from this repository root. The tests cover vali
 The workflow runs the Lua tests, builds and verifies a ZIP with a top-level `GFXSettings` folder, then creates a `v<version>` tag and GitHub release at that exact commit. Existing releases are never overwritten: use a new TOC version for every release. Manual runs are allowed on `release` only. Return to `main` for further development.
 
 No CurseForge upload is configured.
+
+## 1.1.0
+
+- Added raw world draw distance (`farclip`), horizon draw distance, horizon fog distance, and building detail range.
+- Added volumetric fog quality, an indoor volumetric fog toggle, shadow resolution, cloud texture detail, ambient particles, and grayscale while dead.
+- Expanded the existing panel to 22 controls. New controls support Restore originals and are disabled when their console variable is unavailable.
 
 ## 1.0.0
 

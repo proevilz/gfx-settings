@@ -1,7 +1,7 @@
 ## Interface: 16001
 ## Title: GFXSettings
 ## Notes: Small panel for graphics console settings. Open with /gfx.
-## Version: 1.0.1
+## Version: 1.1.0
 ## Author: proevilz
 ## SavedVariables: ForeverGraphicsDB
 ## OptionalDeps: ForeverGraphics

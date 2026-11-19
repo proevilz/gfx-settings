@@ -13,6 +13,16 @@ G.options = {
     {"rippleDetail", "Water ripples", 0, 2, 1, "Water ripple detail. Hardware support varies."},
     {"ResampleAlwaysSharpen", "Always sharpen", 0, 1, 1, "0 = off, 1 = on. Enables sharpening without lowering render scale."},
     {"shadowBlendCascades", "Blend shadow edges", 0, 1, 1, "0 = off, 1 = on. Blends transitions between shadow layers."},
+    {"farclip", "World draw distance", 1000, 10000, 100, "How far the world is drawn. Higher values can reduce frame rate."},
+    {"horizonStart", "Horizon fog distance", 0, 6000, 100, "Moves distance fog farther out as the value increases."},
+    {"horizonClip", "Horizon draw distance", 1000, 10000, 100, "How far the distant horizon is drawn."},
+    {"wmoLodDist", "Building detail range", 100, 800, 25, "How far buildings and large structures retain more detail."},
+    {"shadowTextureSize", "Shadow resolution", 512, 2048, 256, "Higher values produce sharper shadow maps when supported."},
+    {"ffxDeath", "Grayscale while dead", 0, 1, 1, "0 = off, 1 = on. Controls the grayscale screen effect while dead."},
+    {"volumeFogLevel", "Volumetric fog", 0, 4, 1, "Rendering quality of volumetric fog. Higher levels can reduce frame rate."},
+    {"volumeFogInterior", "Indoor volumetric fog", 0, 1, 1, "0 = off, 1 = on. Controls volumetric fog in interiors where supported."},
+    {"SkyCloudLOD", "Cloud texture detail", 0, 3, 1, "Controls cloud texture resolution."},
+    {"particulatesEnabled", "Ambient particles", 0, 1, 1, "0 = off, 1 = on. Controls floating particles such as dust and motes."},
 }
 
 function G.Read(name)

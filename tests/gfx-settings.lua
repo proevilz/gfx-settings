@@ -1,5 +1,6 @@
 local addonRoot = ... or "."
-local G, values, writes, combat, reject, clamp = {}, {groundEffectDensity = "32", weatherDensity = "3"}, 0
+local values = {groundEffectDensity = "32", weatherDensity = "3", farclip = "10000", volumeFogLevel = "2"}
+local G, writes, combat, reject, clamp = {}, 0
 C_CVar = {
     GetCVar = function(name) return values[name] end,
     SetCVar = function(name, value)
@@ -65,7 +66,10 @@ function methods:IsShown() return self.shown end
 function methods:SetShown(shown) if shown then self:Show() else self:Hide() end end
 function methods:CreateFontString() return frame() end
 local markers = {}
+local controls, sliders, slidersByCVar = {}, {}, {}
 C_CVar.GetCVarDefault = function(name)
+    assert(not slidersByCVar[name], name .. " should have only one slider")
+    slidersByCVar[name] = sliders[#sliders]
     return ({groundEffectDensity = "128", weatherDensity = "4"})[name]
 end
 function methods:CreateTexture(_, _, _, sublevel)
@@ -86,12 +90,12 @@ function methods:GetRegions()
 end
 function methods:IsObjectType(kind) return self.kind == kind end
 function methods:SetDesaturated(value) self.desaturated = value end
-local controls = {}
-CreateFrame = function(_, name)
+CreateFrame = function(kind, name)
     local f = frame()
     f.Low, f.High, f.Text = frame(), frame(), frame()
     if name then _G[name] = f end
     controls[#controls + 1] = f
+    if kind == "Slider" then sliders[#sliders + 1] = f end
     return f
 end
 unpack = table.unpack or unpack
@@ -102,6 +106,17 @@ SlashCmdList.GFXSETTINGS()
 assert(GFXSettingsPanel:IsShown())
 assert(#markers == 1 and markers[1] == 53, "mark the midpoint and skip missing or out-of-range defaults")
 assert(writes == previousWrites, "opening panel must not write CVars")
+for _, option in ipairs(G.options) do
+    assert(slidersByCVar[option[1]], option[1] .. " needs a slider in the panel")
+end
+assert(slidersByCVar.volumeFogInterior.enabled == false, "disable input for a client without indoor fog control")
+slidersByCVar.farclip:SetValue(9000)
+slidersByCVar.volumeFogLevel:SetValue(3)
+assert(values.farclip == "9000" and values.volumeFogLevel == "3", "new sliders must write their own CVars")
+local restoreButton = controls[#controls - 1]
+restoreButton.scripts.OnClick()
+assert(values.farclip == "10000" and values.volumeFogLevel == "2", "restore both original values")
+previousWrites = writes
 SlashCmdList.GFXSETTINGS()
 assert(not GFXSettingsPanel:IsShown())
 for _, control in ipairs(controls) do
@@ -112,8 +127,7 @@ for _, control in ipairs(controls) do
         break
     end
 end
-assert(#controls == 42 and writes == previousWrites + 1)
-local restoreButton = controls[#controls - 1]
+assert(writes == previousWrites + 1)
 assert(restoreButton.regions[1].desaturated and restoreButton.regions[2].desaturated)
 assert(not restoreButton.regions[3].desaturated, "leave button text unchanged")
 StaticPopupDialogs = {}
