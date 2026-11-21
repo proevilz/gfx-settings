@@ -30,7 +30,9 @@ Run `lua tests/gfx-settings.lua` from this repository root. The tests cover vali
 
 The workflow runs the Lua tests, builds and verifies a ZIP with a top-level `GFXSettings` folder, then creates a `v<version>` tag and GitHub release at that exact commit. Existing releases are never overwritten: use a new TOC version for every release. Manual runs are allowed on `release` only. Return to `main` for further development.
 
-No CurseForge upload is configured.
+The CurseForge job downloads the published GitHub ZIP and uploads it to project 1813069 as a WoW Forever release. It uses the `CURSEFORGE_API_TOKEN` repository Actions secret. Add the version's notes under `## <version>` below. The workflow uses recent commit subjects when that section is absent.
+
+If CurseForge fails after GitHub publishes, check the CurseForge Files page for the new ZIP before retrying. If it is absent, use **Re-run failed jobs** in GitHub Actions to retry the upload without creating another GitHub release.
 
 ## 1.1.0
 

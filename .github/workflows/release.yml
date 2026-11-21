@@ -16,6 +16,8 @@ jobs:
   release:
     if: github.ref == 'refs/heads/release'
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.package.outputs.version }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -61,7 +63,7 @@ jobs:
               output.write(f'version={version}\narchive={archive}\n')
           PY
 
-      - name: Publish release
+      - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.package.outputs.version }}
@@ -71,7 +73,61 @@ jobs:
             echo "Version v$VERSION already exists. Increase the TOC version before publishing."
             exit 1
           fi
+          notes="$RUNNER_TEMP/gfx-release-notes.md"
+          awk -v heading="## $VERSION" '$0 == heading { found = 1; next } found && /^## / { exit } found { print }' README.md > "$notes"
+          if ! grep -q '[^[:space:]]' "$notes"; then
+            previous_tag="$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || true)"
+            if [[ -n "$previous_tag" ]]; then
+              git log --no-merges --format='- %s' "$previous_tag..HEAD" > "$notes"
+            fi
+            if ! grep -q '[^[:space:]]' "$notes"; then
+              git log -1 --format=%B > "$notes"
+            fi
+          fi
           gh release create "v$VERSION" "$ARCHIVE" \
             --target "$GITHUB_SHA" \
             --title "GFXSettings $VERSION" \
+            --notes-file "$notes" \
             --generate-notes
+
+  curseforge:
+    name: Upload to CurseForge
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ needs.release.outputs.version }}
+    steps:
+      - name: Download GitHub release ZIP and notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "v$VERSION" --repo "$GITHUB_REPOSITORY" \
+            --pattern "GFXSettings-$VERSION.zip" --dir "$RUNNER_TEMP"
+          gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" --json body --jq .body \
+            > "$RUNNER_TEMP/gfx-release-notes.md"
+
+      - name: Upload the same ZIP to CurseForge
+        shell: bash
+        env:
+          CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
+        run: |
+          if [[ -z "$CURSEFORGE_API_TOKEN" ]]; then
+            echo "::error::Set the CURSEFORGE_API_TOKEN Actions secret."
+            exit 1
+          fi
+          # CurseForge game version 17053 is WoW Forever 1.60.1 (interface 16001).
+          archive="$RUNNER_TEMP/GFXSettings-$VERSION.zip"
+          metadata="$(jq -nc --arg name "GFXSettings-$VERSION.zip" \
+            --rawfile notes "$RUNNER_TEMP/gfx-release-notes.md" \
+            '{displayName: $name, changelog: $notes, changelogType: "markdown", gameVersions: [17053], releaseType: "release"}')"
+          response="$(printf 'X-Api-Token: %s\n' "$CURSEFORGE_API_TOKEN" |
+            curl --silent --show-error --fail --max-time 120 --header @- \
+              --form-string "metadata=$metadata" --form "file=@$archive;type=application/zip" \
+              https://wow.curseforge.com/api/projects/1813069/upload-file)"
+          if ! file_id="$(jq -er '.id | select(type == "number" and . > 0)' <<< "$response")"; then
+            echo "::error::CurseForge returned no file ID. Check the project Files page before retrying."
+            exit 1
+          fi
+          echo "CurseForge accepted file $file_id."
